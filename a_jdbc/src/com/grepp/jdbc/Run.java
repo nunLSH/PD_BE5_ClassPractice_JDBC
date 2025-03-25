@@ -23,8 +23,11 @@ public class Run {
         System.out.println(dao.delete(dto));
     }
 
+    // NOTE 03 SQL injection
     private static void update(MemberDao dao) {
         MemberDto dto = new MemberDto();
+        //dto.setUserId("a' or 1=1 or user_id = 'a");
+        //dto.setPassword("ㅋㅋㅋㅋㅋㅋㅋ");
         dto.setUserId("super");
         dto.setPassword("1111");
         System.out.println(dao.update(dto));
