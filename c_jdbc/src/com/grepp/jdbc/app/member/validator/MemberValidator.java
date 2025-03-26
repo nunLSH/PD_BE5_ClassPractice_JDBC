@@ -20,7 +20,7 @@ public class MemberValidator implements Validator<MemberDto> {
         Optional<MemberDto> member = memberDao.selectById(conn, dto.getUserId());
 
         member.ifPresent(e -> {
-            throw new ValidException("중복된 아이디입니다.");
+            throw new ValidException("중복된 아이디 입니다.");
         });
 
         // 아이디는 공백 불가

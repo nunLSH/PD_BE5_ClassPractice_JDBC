@@ -23,7 +23,6 @@ public class MemberController {
 
     public String signup(MemberDto memberDto) {
         validator.validate(memberDto);
-        Optional<MemberDto> res = memberService.signup(memberDto);
-        return gson.toJson(res.get());
+        return gson.toJson(memberService.signup(memberDto));
     }
 }
