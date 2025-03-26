@@ -23,11 +23,6 @@ public class MemberService {
         Connection conn = jdbcTemplate.getConnection();
 
         try {
-            Optional<MemberDto> member = memberDao.selectById(conn, dto.getUserId());
-            member.ifPresent(e -> {
-                throw new ValidException("중복된 아이디입니다.");
-            });
-
             Optional<MemberDto> res = memberDao.insert(conn, dto);
             jdbcTemplate.commit(conn);
             return res;
