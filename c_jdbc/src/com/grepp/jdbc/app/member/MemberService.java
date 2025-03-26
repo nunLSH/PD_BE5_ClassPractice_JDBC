@@ -5,8 +5,10 @@ import com.grepp.jdbc.app.member.dao.MemberDao;
 import com.grepp.jdbc.app.member.dto.MemberDto;
 import com.grepp.jdbc.infra.db.JdbcTemplate;
 import com.grepp.jdbc.infra.exception.DataAccessException;
+import com.grepp.jdbc.infra.exception.ValidException;
 import java.sql.Connection;
 import java.util.Optional;
+import javax.swing.ViewportLayout;
 
 // NOTE 02 Service
 // 비지니스 로직을 구현
@@ -21,6 +23,11 @@ public class MemberService {
         Connection conn = jdbcTemplate.getConnection();
 
         try {
+            Optional<MemberDto> member = memberDao.selectById(conn, dto.getUserId());
+            member.ifPresent(e -> {
+                throw new ValidException("중복된 아이디입니다.");
+            });
+
             Optional<MemberDto> res = memberDao.insert(conn, dto);
             jdbcTemplate.commit(conn);
             return res;
