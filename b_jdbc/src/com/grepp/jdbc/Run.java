@@ -13,8 +13,8 @@ public class Run {
         MemberDao dao = new MemberDao();
 //        insert(dao);
 //        select(dao);
-        update(dao);
-//        delete(dao);
+//        update(dao);
+        delete(dao);
     }
 
     private static void delete(MemberDao dao) {
@@ -26,20 +26,20 @@ public class Run {
     // NOTE 03 SQL injection
     private static void update(MemberDao dao) {
         MemberDto dto = new MemberDto();
-        //dto.setUserId("a' or 1=1 or user_id = 'a");
-        //dto.setPassword("ㅋㅋㅋㅋㅋㅋㅋ");
-        dto.setUserId("super");
-        dto.setPassword("1111");
+        dto.setUserId("a' or 1=1 or user_id = 'a");
+        dto.setPassword("ㅋㅋㅋㅋㅋㅋㅋ");
+//        dto.setUserId("super");
+//        dto.setPassword("1111");
         System.out.println(dao.update(dto));
     }
 
     private static void select(MemberDao dao) {
-        System.out.println(dao.selectByIdAndPassword("super", "9999"));
+        System.out.println(dao.selectByIdAndPassword("super", "ㅋㅋㅋㅋㅋㅋㅋ"));
     }
 
     private static void insert(MemberDao dao) {
         MemberDto dto = new MemberDto();
-        dto.setUserId("lsh");
+        dto.setUserId("test");
         dto.setPassword("9999");
         dto.setEmail("super@gmail.com");
         dto.setTell("010-2222-3333");

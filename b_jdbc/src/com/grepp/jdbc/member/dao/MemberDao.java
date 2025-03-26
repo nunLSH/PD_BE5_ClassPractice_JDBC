@@ -4,6 +4,7 @@ import com.grepp.jdbc.member.code.Grade;
 import com.grepp.jdbc.member.dto.MemberDto;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,29 +17,30 @@ import java.sql.Statement;
 // DB로 부터 읽어온 데이터를 domain layer 에서 사용하기 적합한 형태로 parsing
 public class MemberDao {
 
-    public MemberDto insert(MemberDto dto){
-        String url = "com.grepp.jdbc:mysql://localhost:3306/com.grepp.jdbc?useUnicode=true&characterEncoding=utf8";
-        String sql = "insert into member("
-            + "user_id, password, email,"
-            + "grade, tell, is_leave)"
-            + " values("
-            + "'"+ dto.getUserId() + "',"
-            + "'"+ dto.getPassword() + "',"
-            + "'"+ dto.getEmail() + "',"
-            + "'"+ dto.getGrade().name() + "',"
-            + "'"+ dto.getTell() + "',"
-            + dto.getLeave() + ")";
+    public MemberDto insert(MemberDto dto) {
+        String url = "jdbc:mysql://localhost:3306/jdbc?useUnicode=true&characterEncoding=utf8";
+        String sql = "insert into member(user_id, password, email, grade, tell) "
+            + "values(?,?,?,?,?)";
         try {
-            Class.forName("com.mysql.cj.com.grepp.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        try(
+        try (
             Connection conn = DriverManager.getConnection(url, "bm", "it2116016^^");
-            Statement stmt = conn.createStatement();
+            PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            int res = stmt.executeUpdate(sql);
+
+            stmt.setString(1, dto.getUserId());
+            stmt.setString(2, dto.getPassword());
+            stmt.setString(3, dto.getEmail());
+            stmt.setString(4, dto.getGrade().name());
+            stmt.setString(5, dto.getTell());
+
+            System.out.println(stmt);
+
+            int res = stmt.executeUpdate();
             return res > 0 ? dto : new MemberDto();
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
@@ -49,37 +51,38 @@ public class MemberDao {
         return new MemberDto();
     }
 
-    public MemberDto selectByIdAndPassword(String id, String password){
-        String url = "com.grepp.jdbc:mysql://localhost:3306/com.grepp.jdbc?useUnicode=true&characterEncoding=utf8";
-        String sql = "select * from member where user_id = '"
-            + id + "' and password = '" + password + "'";
+    public MemberDto selectByIdAndPassword(String id, String password) {
+        String url = "jdbc:mysql://localhost:3306/jdbc?useUnicode=true&characterEncoding=utf8";
+        String sql = "select * from member where user_id = ? and password = ?";
 
         System.out.println(sql);
 
         try {
-            Class.forName("com.mysql.cj.com.grepp.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        try(
+        try (
             Connection conn = DriverManager.getConnection(url, "bm", "it2116016^^");
-            Statement stmt = conn.createStatement();
-            ResultSet rset = stmt.executeQuery(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
 
+            stmt.setString(1, id);
+            stmt.setString(2, password);
             MemberDto dto = new MemberDto();
-            while(rset.next()){
-                dto.setUserId(rset.getString("user_id"));
-                dto.setPassword(rset.getString("password"));
-                dto.setEmail(rset.getString("email"));
-                dto.setTell(rset.getString("tell"));
-                dto.setLeave(rset.getBoolean("is_leave"));
-                dto.setGrade(Grade.valueOf(rset.getString("grade")));
+
+            try (ResultSet rset = stmt.executeQuery()) {
+                while (rset.next()) {
+                    dto.setUserId(rset.getString("user_id"));
+                    dto.setPassword(rset.getString("password"));
+                    dto.setEmail(rset.getString("email"));
+                    dto.setTell(rset.getString("tell"));
+                    dto.setLeave(rset.getBoolean("is_leave"));
+                    dto.setGrade(Grade.valueOf(rset.getString("grade")));
+                }
+                return dto;
             }
-
-            return dto;
-
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
@@ -89,23 +92,24 @@ public class MemberDao {
         return new MemberDto();
     }
 
-    public MemberDto update(MemberDto dto){
-        String url = "com.grepp.jdbc:mysql://localhost:3306/com.grepp.jdbc?useUnicode=true&characterEncoding=utf8";
-        String sql = "update member set password = '"
-            + dto.getPassword() + "' where user_id = '" + dto.getUserId() + "'";
+    public MemberDto update(MemberDto dto) {
+        String url = "jdbc:mysql://localhost:3306/jdbc?useUnicode=true&characterEncoding=utf8";
+        String sql = "update member set password = ? where user_id = ?";
 
         System.out.println(sql);
         try {
-            Class.forName("com.mysql.cj.com.grepp.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        try(
+        try (
             Connection conn = DriverManager.getConnection(url, "bm", "it2116016^^");
-            Statement stmt = conn.createStatement();
+            PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            int res = stmt.executeUpdate(sql);
+            stmt.setString(1, dto.getPassword());
+            stmt.setString(2, dto.getUserId());
+            int res = stmt.executeUpdate();
             return res > 0 ? dto : new MemberDto();
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
@@ -116,21 +120,22 @@ public class MemberDao {
         return new MemberDto();
     }
 
-    public MemberDto delete(MemberDto dto){
-        String url = "com.grepp.jdbc:mysql://localhost:3306/com.grepp.jdbc?useUnicode=true&characterEncoding=utf8";
-        String sql = "delete from member where user_id = '" + dto.getUserId() + "'";
+    public MemberDto delete(MemberDto dto) {
+        String url = "jdbc:mysql://localhost:3306/jdbc?useUnicode=true&characterEncoding=utf8";
+        String sql = "delete from member where user_id = ?";
 
         try {
-            Class.forName("com.mysql.cj.com.grepp.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        try(
+        try (
             Connection conn = DriverManager.getConnection(url, "bm", "it2116016^^");
-            Statement stmt = conn.createStatement();
+            PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            int res = stmt.executeUpdate(sql);
+            stmt.setString(1, dto.getUserId());
+            int res = stmt.executeUpdate();
             return res > 0 ? dto : new MemberDto();
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
@@ -140,4 +145,5 @@ public class MemberDao {
 
         return new MemberDto();
     }
+
 }
