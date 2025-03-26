@@ -29,6 +29,7 @@ public class MemberMenu {
                     break;
                 case 2:
                     System.out.print(" * 아이디 : ");
+                    System.out.println(memberController.get(sc.next()));
                     break;
                 case 3:
 

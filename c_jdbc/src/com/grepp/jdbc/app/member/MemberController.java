@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.grepp.jdbc.app.member.dto.MemberDto;
 import com.grepp.jdbc.app.member.validator.MemberValidator;
-import java.util.Optional;
 
 // 1. 사용자의 입력값을 어플리케이션 내에서 사용하기 적합한 형태로 파싱
 // 2. 요청에 대해 인가 처리를 하는 외벽 역할
@@ -24,5 +23,10 @@ public class MemberController {
     public String signup(MemberDto memberDto) {
         validator.validate(memberDto);
         return gson.toJson(memberService.signup(memberDto));
+    }
+
+    public String get(String userId) {
+        return gson.toJson(memberService.selectById(userId));
+
     }
 }
