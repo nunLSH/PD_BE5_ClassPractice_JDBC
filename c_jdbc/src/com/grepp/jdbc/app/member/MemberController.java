@@ -29,4 +29,8 @@ public class MemberController {
         return gson.toJson(memberService.selectById(userId));
 
     }
+
+    public String getAll() {
+        return gson.toJson(memberService.selectAll());
+    }
 }

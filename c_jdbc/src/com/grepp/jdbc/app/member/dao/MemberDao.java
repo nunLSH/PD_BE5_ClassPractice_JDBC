@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 // NOTE 03 DAO
@@ -47,12 +49,16 @@ public class MemberDao {
             Connection conn = jdbcTemplate.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-
+            MemberDto res = null;
             stmt.setString(1, id);
             stmt.setString(2, password);
 
             try(ResultSet rset = stmt.executeQuery()) {
-                return getMemberDto(rset);
+                while(rset.next()){
+                    res = generateMemberDto(rset);
+                }
+
+                return Optional.ofNullable(res);
             }
 
         } catch (SQLException ex) {
@@ -94,32 +100,48 @@ public class MemberDao {
 
     public Optional<MemberDto> selectById(Connection conn, String userId) {
         String sql = "select * from member where user_id = ?";
-
+        MemberDto res = null;
         try(
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.setString(1, userId);
             try(ResultSet rset = stmt.executeQuery();){
-                return getMemberDto(rset);
+                while(rset.next()){
+                    res =generateMemberDto(rset);
+                }
+                return Optional.ofNullable(res);
             }
-
         } catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
     }
 
-    private Optional<MemberDto> getMemberDto(ResultSet rset) throws SQLException {
-        MemberDto res = null;
-        while(rset.next()){
-            res = new MemberDto();
-            res.setUserId(rset.getString("user_id"));
-            res.setPassword(rset.getString("password"));
-            res.setEmail(rset.getString("email"));
-            res.setTell(rset.getString("tell"));
-            res.setLeave(rset.getBoolean("is_leave"));
-            res.setGrade(Grade.valueOf(rset.getString("grade")));
-        }
+    private MemberDto generateMemberDto(ResultSet rset) throws SQLException {
+        MemberDto res = new MemberDto();
+        res.setUserId(rset.getString("user_id"));
+        res.setPassword(rset.getString("password"));
+        res.setEmail(rset.getString("email"));
+        res.setTell(rset.getString("tell"));
+        res.setLeave(rset.getBoolean("is_leave"));
+        res.setGrade(Grade.valueOf(rset.getString("grade")));
+        return res;
+    }
 
-        return Optional.ofNullable(res);
+    public List<MemberDto> selectAll(Connection conn) {
+        String sql = "select * from member";
+        List<MemberDto> members = new ArrayList<>();
+
+        try( PreparedStatement stmt = conn.prepareStatement(sql); ){
+            try (ResultSet rset = stmt.executeQuery()) {
+                while(rset.next()){
+                    members.add(generateMemberDto(rset));
+                }
+
+                return members;
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
     }
 }

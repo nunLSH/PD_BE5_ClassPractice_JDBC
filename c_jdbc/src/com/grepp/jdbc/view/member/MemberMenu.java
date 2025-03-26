@@ -32,7 +32,7 @@ public class MemberMenu {
                     System.out.println(memberController.get(sc.next()));
                     break;
                 case 3:
-
+                    System.out.println(memberController.getAll());
                     break;
 
                 case 4:

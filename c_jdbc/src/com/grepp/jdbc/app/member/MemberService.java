@@ -7,6 +7,7 @@ import com.grepp.jdbc.app.member.dto.MemberInfoDto;
 import com.grepp.jdbc.infra.db.JdbcTemplate;
 import com.grepp.jdbc.infra.exception.DataAccessException;
 import java.sql.Connection;
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -44,6 +45,16 @@ public class MemberService {
         Connection conn = jdbcTemplate.getConnection();
         try{
             return memberDao.selectById(conn, userId).orElse(null);
+        } finally {
+            jdbcTemplate.close(conn);
+        }
+    }
+
+    public List<MemberDto> selectAll() {
+
+        Connection conn = jdbcTemplate.getConnection();
+        try{
+            return memberDao.selectAll(conn);
         } finally {
             jdbcTemplate.close(conn);
         }
