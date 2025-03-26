@@ -1,14 +1,17 @@
 package com.grepp.jdbc.view.member;
 
+import com.grepp.jdbc.app.member.MemberController;
 import com.grepp.jdbc.app.member.code.Grade;
 import com.grepp.jdbc.app.member.dto.MemberDto;
 import java.util.Scanner;
 
 public class MemberMenu {
 
-    private Scanner sc = new Scanner(System.in);
+    private MemberController memberController = new MemberController();
 
     public void menu() {
+        Scanner sc = new Scanner(System.in);
+
         do {
             System.out.println("\n*** 회원 관리 ***");
             System.out.println(" * 1. 회원 등록");
@@ -22,6 +25,7 @@ public class MemberMenu {
 
             switch (sc.nextInt()) {
                 case 1:
+                    System.out.println(memberController.signup(signUpForm(Grade.ROLE_USER)));
                     break;
                 case 2:
                     System.out.print(" * 아이디 : ");
@@ -57,19 +61,20 @@ public class MemberMenu {
 
 
     public MemberDto signUpForm(Grade role) {
+        Scanner sc = new Scanner(System.in);
         MemberDto member = new MemberDto();
 
         System.out.print(" * id : ");
-        member.setUserId(sc.next());
+        member.setUserId(sc.nextLine());
 
         System.out.print(" * password : ");
-        member.setPassword(sc.next());
+        member.setPassword(sc.nextLine());
 
         System.out.print(" * email : ");
-        member.setEmail(sc.next());
+        member.setEmail(sc.nextLine());
 
         System.out.print(" * tell : ");
-        member.setTell(sc.next());
+        member.setTell(sc.nextLine());
 
         member.setGrade(role);
         return member;

@@ -1,8 +1,10 @@
 package com.grepp.jdbc.view;
 
 import com.grepp.jdbc.infra.exception.DataAccessException;
+import com.grepp.jdbc.infra.exception.ValidException;
 import com.grepp.jdbc.view.member.MemberMenu;
 import java.util.Scanner;
+import javax.swing.ViewportLayout;
 
 public class Index {
 
@@ -36,6 +38,8 @@ public class Index {
 
             } catch (DataAccessException e) {
                 e.printStackTrace();
+            } catch (ValidException e){
+                System.out.println("System : " + e.getMessage());
             }
         }
     }

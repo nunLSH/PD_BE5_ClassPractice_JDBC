@@ -45,7 +45,24 @@ public class JdbcTemplate {
 
         try {
             conn = DriverManager.getConnection(url, user, password);
+            conn.setAutoCommit(false);
             return conn;
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    public void commit(Connection conn){
+        try {
+            conn.commit();
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    public void rollback(Connection conn){
+        try {
+            conn.rollback();
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e);
         }
