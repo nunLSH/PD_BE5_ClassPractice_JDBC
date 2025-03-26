@@ -1,6 +1,6 @@
-package com.grepp.jdbc.application.member.dto;
+package com.grepp.jdbc.app.member.dto;
 
-import com.grepp.jdbc.application.member.code.Grade;
+import com.grepp.jdbc.app.member.code.Grade;
 import java.util.Objects;
 
 public class MemberDto {

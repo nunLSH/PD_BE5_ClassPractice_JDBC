@@ -1,7 +1,7 @@
-package com.grepp.jdbc.application.member.dao;
+package com.grepp.jdbc.app.member.dao;
 
-import com.grepp.jdbc.application.member.code.Grade;
-import com.grepp.jdbc.application.member.dto.MemberDto;
+import com.grepp.jdbc.app.member.code.Grade;
+import com.grepp.jdbc.app.member.dto.MemberDto;
 import com.grepp.jdbc.infra.db.JdbcTemplate;
 import com.grepp.jdbc.infra.exception.DataAccessException;
 import java.sql.Connection;
