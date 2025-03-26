@@ -2,14 +2,27 @@ package com.grepp.jdbc.view.member;
 
 import com.grepp.jdbc.app.member.MemberController;
 import com.grepp.jdbc.app.member.code.Grade;
-import com.grepp.jdbc.app.member.dto.MemberDto;
+import com.grepp.jdbc.app.member.dto.form.SignupForm;
 import java.util.Scanner;
 
 public class MemberMenu {
 
     private MemberController memberController = new MemberController();
 
+    public void login(){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n*** login ***");
+        System.out.print(" * id : ");
+        String userId = sc.next();
+
+        System.out.print(" * password : ");
+        String password = sc.next();
+
+        memberController.login(userId, password);
+    }
+
     public void menu() {
+
         Scanner sc = new Scanner(System.in);
 
         do {
@@ -27,15 +40,18 @@ public class MemberMenu {
                 case 1:
                     System.out.println(memberController.signup(signUpForm(Grade.ROLE_USER)));
                     break;
+
                 case 2:
                     System.out.print(" * 아이디 : ");
                     System.out.println(memberController.get(sc.next()));
                     break;
+
                 case 3:
                     System.out.println(memberController.getAll());
                     break;
 
                 case 4:
+                    System.out.println(memberController.signup(signUpForm(Grade.ROLE_ADMIN)));
                     break;
 
                 case 5:
@@ -45,11 +61,12 @@ public class MemberMenu {
                     System.out.print(" * 변경할 비밀번호 : ");
                     String password = sc.next();
 
+                    System.out.println(memberController.modifyPassword(userId, password));
                     break;
 
                 case 6:
                     System.out.print(" * 아이디 : ");
-
+                    System.out.println(memberController.leave(sc.next()));
 
                 case 7:
                     return;
@@ -60,10 +77,9 @@ public class MemberMenu {
         } while (true);
     }
 
-
-    public MemberDto signUpForm(Grade role) {
+    public SignupForm signUpForm(Grade role) {
         Scanner sc = new Scanner(System.in);
-        MemberDto member = new MemberDto();
+        SignupForm member = new SignupForm();
 
         System.out.print(" * id : ");
         member.setUserId(sc.nextLine());

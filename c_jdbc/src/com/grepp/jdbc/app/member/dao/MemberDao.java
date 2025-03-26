@@ -42,11 +42,10 @@ public class MemberDao {
         }
     }
 
-    public Optional<MemberDto> selectByIdAndPassword(String id, String password){
+    public Optional<MemberDto> selectByIdAndPassword(Connection conn, String id, String password){
         String sql = "select * from member where user_id = ? and password = ?";
 
         try(
-            Connection conn = jdbcTemplate.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             MemberDto res = null;
@@ -83,14 +82,13 @@ public class MemberDao {
         }
     }
 
-    public boolean delete(MemberDto dto){
+    public boolean delete(Connection conn, String userId){
         String sql = "delete from member where user_id = ?";
 
         try(
-            Connection conn = jdbcTemplate.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            stmt.setString(1, dto.getUserId());
+            stmt.setString(1, userId);
             int res = stmt.executeUpdate();
             return res > 0;
         } catch (SQLException ex) {
@@ -141,6 +139,17 @@ public class MemberDao {
             }
 
         } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage(), e);
+        }
+    }
+
+    public void updatePassword(Connection conn, MemberDto dto) {
+        String sql = "update member set password = ? where user_id =?";
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, dto.getPassword());
+            stmt.setString(2, dto.getUserId());
+            stmt.executeUpdate();
+        } catch (SQLException e){
             throw new DataAccessException(e.getMessage(), e);
         }
     }
